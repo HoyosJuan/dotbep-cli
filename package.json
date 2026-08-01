@@ -1,6 +1,6 @@
 {
   "name": "@dotbep/cli",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Scaffold and manage a dotbep runtime project",
   "type": "module",
   "publishConfig": {
