@@ -156,6 +156,21 @@ this.resolver('fetch-issues', async () => {
 
 In production, runtime environment variables are configured on the dotbep platform — not in `.env`, which is otherwise only used by the pull/deploy scripts. The one exception is `npm run dev`: the local preview harness runs resolvers for real (to fetch live data for the lens you're previewing), so it reads the same `this.env` values from your local `.env` — fill in your own test credentials there for any key `npm run pull` adds to `.env.example`.
 
+### Reading plan data
+
+Handlers can read the BEP's own structured data — disciplines, teams, roles, workflows, and everything else in the plan — via `this.bep`, a plain object shaped like the plan itself:
+
+```typescript
+this.automation('assign-discipline', async (instance) => {
+  const discipline = this.bep.disciplines.find(d => d.id === someId)
+  return { success: true, eventId: 'assigned', disciplineName: discipline?.name }
+})
+```
+
+Like `this.env`, only available as an inline arrow function in `index.ts` — same rule as any handler that needs data from `this`.
+
+`this.bep` is a **snapshot**, not a live query: it reflects the plan's state at the moment this specific execution started, and is a detached copy — mutating it (`this.bep.disciplines.push(...)`) does nothing to the actual plan; the plan can only ever be changed through the platform's own authoring flow. There is no `.list()`/`.get()`/`.add()` API here, just the plan's plain arrays — use standard `.find()`/`.filter()`.
+
 ### Custom lenses
 
 Lenses are browser-side LitElement Web Components. The `hello-lens` component is included as a working example.
